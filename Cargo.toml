@@ -1,5 +1,5 @@
 [package]
-name = "console_snake"
+name = "rust_snake"
 version = "0.1.0"
 authors = ["thanadolps <thanadolps@gmail.com>"]
 edition = "2018"
