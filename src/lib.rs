@@ -19,7 +19,7 @@ pub struct SnakeGame {
     pub board: Array2<u32>,
     pub food_pos: (usize, usize),  // (y, x) due to array index notation
     pub snake_pos: (usize, usize), // (y, x) due to array index notation, head of snake
-    pub snake_dir: Direction, // snake direction of motion
+    pub snake_dir: Option<Direction>, // snake direction of motion
     pub snake_lvl: u32,  // determine how long snake part persist (increase when eat food)
     rng: ThreadRng,
 }
@@ -31,7 +31,7 @@ impl SnakeGame {
             board: Array2::zeros(BOARD_SIZE),
             food_pos: (rng.gen_range(0, BOARD_SIZE.0), rng.gen_range(0, BOARD_SIZE.1)),
             snake_pos: (BOARD_SIZE.0/2, BOARD_SIZE.1/2),
-            snake_dir: Direction::RIGHT,
+            snake_dir: None,
             snake_lvl: 3,
             rng
         };
@@ -57,11 +57,16 @@ impl SnakeGame {
 
     // set snake dirction of motion
     fn set_direction(&mut self, dir: Direction) {
-        match dir {
-            Direction::UP => if self.snake_dir != Direction::DOWN { self.snake_dir = dir },
-            Direction::DOWN => if self.snake_dir != Direction::UP { self.snake_dir = dir },
-            Direction::LEFT => if self.snake_dir != Direction::RIGHT { self.snake_dir = dir },
-            Direction::RIGHT => if self.snake_dir != Direction::LEFT { self.snake_dir = dir },
+        if let Some(current_dir) = self.snake_dir {
+            match dir {
+                Direction::UP => if current_dir != Direction::DOWN { self.snake_dir = Some(dir) },
+                Direction::DOWN => if current_dir != Direction::UP { self.snake_dir = Some(dir) },
+                Direction::LEFT => if current_dir != Direction::RIGHT { self.snake_dir = Some(dir) },
+                Direction::RIGHT => if current_dir != Direction::LEFT { self.snake_dir = Some(dir) },
+            }
+        }
+        else {
+            self.snake_dir = Some(dir)
         }
     }
 
@@ -71,14 +76,15 @@ impl SnakeGame {
     fn move_snake_head(&mut self) {
         let board_size = self.board_size();
         match self.snake_dir {
-            Direction::UP =>
+            Some(Direction::UP) =>
                 self.snake_pos.0 = self.snake_pos.0.checked_sub(1).unwrap_or(board_size.0 - 1),
-            Direction::DOWN =>
+            Some(Direction::DOWN) =>
                 self.snake_pos.0 = Some(self.snake_pos.0 + 1).filter(|&x| x < board_size.0).unwrap_or(0),
-            Direction::LEFT =>
+            Some(Direction::LEFT) =>
                 self.snake_pos.1 = self.snake_pos.1.checked_sub(1).unwrap_or(board_size.1 - 1),
-            Direction::RIGHT =>
+            Some(Direction::RIGHT) =>
                 self.snake_pos.1 = Some(self.snake_pos.1 + 1).filter(|&x| x < board_size.1).unwrap_or(0),
+            None => (),
         }
     }
 
