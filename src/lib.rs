@@ -6,7 +6,7 @@ use rand::{thread_rng, Rng};
 
 const BOARD_SIZE: (usize, usize) = (7, 7);
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Direction {
     UP, DOWN, LEFT, RIGHT
 }
@@ -57,7 +57,12 @@ impl SnakeGame {
 
     // set snake dirction of motion
     fn set_direction(&mut self, dir: Direction) {
-        self.snake_dir = dir;
+        match dir {
+            Direction::UP => if self.snake_dir != Direction::DOWN { self.snake_dir = dir },
+            Direction::DOWN => if self.snake_dir != Direction::UP { self.snake_dir = dir },
+            Direction::LEFT => if self.snake_dir != Direction::RIGHT { self.snake_dir = dir },
+            Direction::RIGHT => if self.snake_dir != Direction::LEFT { self.snake_dir = dir },
+        }
     }
 
     /// move snake forward in direction self.snake_dir
