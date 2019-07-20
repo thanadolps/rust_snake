@@ -4,8 +4,6 @@ use ndarray_parallel::prelude::ParMap;
 use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
 
-const BOARD_SIZE: (usize, usize) = (7, 7);
-
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Direction {
     UP, DOWN, LEFT, RIGHT
@@ -25,14 +23,15 @@ pub struct SnakeGame {
 }
 
 impl SnakeGame {
-    pub fn new() -> Self {
+    pub fn new(board_width: usize, board_height: usize, starting_length: u32) -> Self {
         let mut rng = thread_rng();
+        let board_size = (board_height, board_width);
         let mut game = SnakeGame {
-            board: Array2::zeros(BOARD_SIZE),
-            food_pos: (rng.gen_range(0, BOARD_SIZE.0), rng.gen_range(0, BOARD_SIZE.1)),
-            snake_pos: (BOARD_SIZE.0/2, BOARD_SIZE.1/2),
+            board: Array2::zeros(board_size),
+            food_pos: (rng.gen_range(0, board_size.0), rng.gen_range(0, board_size.1)),
+            snake_pos: (board_size.0/2, board_size.1/2),
             snake_dir: None,
-            snake_lvl: 3,
+            snake_lvl: starting_length,
             rng
         };
         game.tick(None);
@@ -167,6 +166,6 @@ impl Display for SnakeGame {
 
 impl Default for SnakeGame {
     fn default() -> Self {
-        Self::new()
+        Self::new(7, 7, 3)
     }
 }
