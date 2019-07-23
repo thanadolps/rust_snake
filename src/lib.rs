@@ -90,7 +90,7 @@ impl SnakeGame {
     /// check if sometime is collided with snake head and called appropriate method,
     /// should be call after moving snake head and before setting value to board
     fn check_snake_collision(&mut self) {
-        if self.board[self.snake_pos] != 0 {
+        if self.board[self.snake_pos] != 0 && self.snake_dir.is_some() {
             // collide with self
             self.snake_collided();
         }
