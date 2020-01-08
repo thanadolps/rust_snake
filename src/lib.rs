@@ -13,7 +13,7 @@ pub enum Direction {
 }
 
 #[readonly::make]
-pub struct SnakeGame {
+pub struct SnakeGame<R: Rng> {
     /// board consist of number timer, value decrease every tick clamped to 0 so it eventually become 0
     ///
     /// for each cell in array -> 0 = empty, >0 = snake part exist there
@@ -22,13 +22,25 @@ pub struct SnakeGame {
     pub snake_pos: (usize, usize), // (y, x) due to array index notation, head of snake
     pub snake_dir: Option<Direction>, // snake direction of motion
     pub snake_lvl: u32,            // determine how long snake part persist (increase when eat food)
-    rng: ThreadRng,
+    rng: R,
 }
 
-impl SnakeGame {
+impl SnakeGame<ThreadRng> {
     pub fn new(board_width: usize, board_height: usize, starting_length: u32) -> Self {
-        let mut rng = thread_rng();
+        let rng = thread_rng();
+        SnakeGame::with_rng(board_width, board_height, starting_length, rng)
+    }
+}
+
+impl<R: Rng> SnakeGame<R> {
+    pub fn with_rng(
+        board_width: usize,
+        board_height: usize,
+        starting_length: u32,
+        mut rng: R,
+    ) -> Self {
         let board_size = (board_height, board_width);
+
         let mut game = SnakeGame {
             board: Array2::zeros(board_size),
             food_pos: (
@@ -40,6 +52,7 @@ impl SnakeGame {
             snake_lvl: starting_length,
             rng,
         };
+
         game.tick(None);
         game
     }
@@ -166,7 +179,7 @@ impl SnakeGame {
     }
 }
 
-impl Display for SnakeGame {
+impl<R: Rng> Display for SnakeGame<R> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         writeln!(f, "{}", "-".repeat(self.board.len_of(Axis(0))))?;
 
