@@ -1,10 +1,9 @@
 use console::Term;
 
-use text_io::{try_read, try_scan, read};
-use rust_snake::{SnakeGame, Direction};
+use rust_snake::{Direction, SnakeGame};
+use text_io::{read, try_read, try_scan};
 
 fn main() {
-
     let terminal = Term::stdout();
 
     let mut game = SnakeGame::new(7, 7, 3);
@@ -20,7 +19,7 @@ fn main() {
                 'a' => Some(Direction::LEFT),
                 's' => Some(Direction::DOWN),
                 'd' => Some(Direction::RIGHT),
-                _ => None
+                _ => None,
             };
             game.tick(dir);
         }
