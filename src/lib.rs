@@ -1,5 +1,4 @@
 use ndarray::{Array2, Axis};
-use ndarray_parallel::prelude::ParMap;
 use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
 use std::fmt::{Display, Error, Formatter, Write};
