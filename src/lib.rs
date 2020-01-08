@@ -12,6 +12,7 @@ pub enum Direction {
 }
 
 #[readonly::make]
+#[derive(Clone)]
 pub struct SnakeGame<R: Rng> {
     /// board consist of number timer, value decrease every tick clamped to 0 so it eventually become 0
     ///
